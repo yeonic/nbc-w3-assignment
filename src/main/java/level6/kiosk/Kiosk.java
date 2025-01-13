@@ -1,12 +1,12 @@
-package level4.kiosk;
+package level6.kiosk;
 
 import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-import level4.menu.Menu;
-import level4.menu.MenuCategory;
+import level6.menu.Menu;
+import level6.menu.MenuCategory;
 
 public class Kiosk {
 
