@@ -56,32 +56,34 @@ public class Kiosk {
       try {
         switch (currentPhase) {
           case CATEGORY:
+            // 메뉴 출력 & 사용자 입력
             System.out.println(messageMap.get("MAIN"));
-            int mainMenuInput = nextInt(sc);
-            switch (mainMenuInput) {
-              case 0 -> {
-                System.out.println("프로그램을 종료합니다.");
-                return;
-              }
-              case 1 -> currentMessage = messageMap.get("BURGERS");
-              case 2 -> currentMessage = messageMap.get("DRINKS");
-              case 3 -> currentMessage = messageMap.get("DESSERTS");
-              default -> throw new InputMismatchException("잘못된 입력입니다. 다시 입력해주세요.");
+            int categoryInput = nextInt(sc);
+
+            // input 처리
+            currentMessage = processCategoryInput(categoryInput);
+            if (currentMessage == null) {
+              return;
             }
+
+            // 다음 State 지정
             currentPhase = SelectionPhase.MENU;
             break;
           case MENU:
+            // 메뉴 출력 & 사용자 입력
             System.out.println(currentMessage);
-            int subMenuInput = nextInt(sc);
-            if (subMenuInput == 0) {
+            int menuInput = nextInt(sc);
+
+            // input 처리
+            if (currentMessage == null || menuInput == 0) {
               currentPhase = SelectionPhase.CATEGORY;
               continue;
             }
-            if (subMenuInput - 1 >= currentMessage.getEntries().size()) {
-              throw new InputMismatchException("범위 안의 수를 입력해주세요.");
-            }
-            System.out.println("선택한 메뉴 : " + currentMessage.getEntries().get(subMenuInput - 1));
+            processMenuInput(menuInput, currentMessage);
+
+            // 다음 State 지정
             currentPhase = SelectionPhase.CATEGORY;
+            break;
         }
       } catch (
           InputMismatchException e) {
@@ -91,31 +93,35 @@ public class Kiosk {
     }
   }
 
+  private void processMenuInput(int subMenuInput, KioskMessage currentMessage)
+      throws InputMismatchException {
+
+    if (subMenuInput - 1 >= currentMessage.getEntries().size()) {
+      throw new InputMismatchException("범위 안의 수를 입력해주세요.");
+    }
+    System.out.println("선택한 메뉴 : " + currentMessage.getEntries().get(subMenuInput - 1));
+  }
+
+  private KioskMessage processCategoryInput(int mainMenuInput) throws InputMismatchException {
+
+    KioskMessage currentMessage;
+
+    switch (mainMenuInput) {
+      case 0 -> {
+        System.out.println("프로그램을 종료합니다.");
+        return null;
+      }
+      case 1 -> currentMessage = messageMap.get("BURGERS");
+      case 2 -> currentMessage = messageMap.get("DRINKS");
+      case 3 -> currentMessage = messageMap.get("DESSERTS");
+      default -> throw new InputMismatchException("잘못된 입력입니다. 다시 입력해주세요.");
+    }
+    return currentMessage;
+  }
+
   public static int nextInt(Scanner scanner) throws InputMismatchException {
     int i = scanner.nextInt();
     scanner.nextLine();
     return i;
   }
 }
-
-//try {
-//// input 받기
-//int cmd = nextInt(sc);
-//
-//        if (cmd == 0) {
-//    // cmd가 0이면 종료
-//    System.out.println("프로그램을 종료합니다.");
-//          break;
-//              } else if (cmd - 1 < menuItems.size()) {
-//// List<MenuItem>의 범위 안에 존재하면 선택한 메뉴 출력
-//MenuItem selectedItem = menuItems.get(cmd - 1);
-//          System.out.printf("선택한 메뉴 : " + format, selectedItem.getName(), selectedItem.getPrice(),
-//              selectedItem.getDescription());
-//    } else {
-//    // 범위를 벗어나면 다시 입력 받음
-//    System.out.println("존재하지 않는 메뉴입니다. 다시 선택해주세요.");
-//        }
-//            } catch (InputMismatchException e) {
-//    System.out.println("숫자를 입력하세요.");
-//        throw new RuntimeException(e);
-//}
