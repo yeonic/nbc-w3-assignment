@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import level6.Cart.Cart;
+import level6.kiosk.message.ComposedKioskMessage;
+import level6.kiosk.message.KioskMessage;
+import level6.kiosk.message.MenuKioskMessage;
+import level6.kiosk.message.StringKioskMessage;
 import level6.menu.Menu;
 import level6.menu.MenuCategory;
 import level6.menu.MenuItem;
@@ -22,39 +26,33 @@ public class Kiosk {
     this.menus = menus;
 
     initMessageMap();
-    initMessageEntries();
   }
 
   private void initMessageMap() {
     messageMap.put("MAIN",
-        new KioskMessage("[ MAIN MENU ]", "1. Burgers\n2. Drinks\n3. Desserts\n0. 종료"));
+        new StringKioskMessage("[ MAIN MENU ]", "0. 종료", List.of("1. Burgers", "2. Drinks", "3. Desserts")));
+    messageMap.put("CART", new StringKioskMessage("위 메뉴를 장바구니에 추가하시겠습니까?", "2. 취소", List.of("1. 확인")));
+    messageMap.put("ORDER_MAIN",
+        new ComposedKioskMessage(List.of(
+            messageMap.get("MAIN"),
+            new StringKioskMessage("[ ORDER MENU ]", "5. Cancel", List.of("4. Orders")))
+        ));
 
-    messageMap.put("BURGERS", new KioskMessage("[ BURGERS MENU ]", "0. 뒤로가기"));
-    messageMap.put("DRINKS", new KioskMessage("[ DRINKS MENU ]", "0. 뒤로가기"));
-    messageMap.put("DESSERTS", new KioskMessage("[ DESSERTS MENU ]", "0. 뒤로가기"));
 
-    messageMap.put("CART", new KioskMessage("위 메뉴를 장바구니에 추가하시겠습니까?", "1. 확인\t\t2.취소"));
-    messageMap.put("ORDER", new KioskMessage("[ ORDER MENU ]", "4. Orders\n5. Cancel"));
+    messageMap.put("BURGERS", new MenuKioskMessage("[ BURGERS MENU ]", "0. 뒤로가기",
+        menus.stream().filter(m -> m.isCategoryEqualTo(MenuCategory.BURGERS))
+                      .flatMap(menu -> menu.getMenuItems().stream()).toList()));
+
+    messageMap.put("DRINKS", new MenuKioskMessage("[ DRINKS MENU ]", "0. 뒤로가기",
+        menus.stream().filter(m -> m.isCategoryEqualTo(MenuCategory.DRINKS))
+                      .flatMap(menu -> menu.getMenuItems().stream()).toList()));
+
+    messageMap.put("DESSERTS", new MenuKioskMessage("[ DESSERTS MENU ]", "0. 뒤로가기",
+        menus.stream().filter(m -> m.isCategoryEqualTo(MenuCategory.DESSERTS))
+                      .flatMap(menu -> menu.getMenuItems().stream()).toList()));
+
 
   }
-
-  private void initMessageEntries() {
-    messageMap.get("BURGERS")
-        .setEntries(menus.stream()
-            .filter(m -> m.isCategoryEqualTo(MenuCategory.BURGERS))
-            .flatMap(menu -> menu.getMenuItems().stream()).toList());
-
-    messageMap.get("DRINKS")
-        .setEntries(menus.stream()
-            .filter(m -> m.isCategoryEqualTo(MenuCategory.DRINKS))
-            .flatMap(menu -> menu.getMenuItems().stream()).toList());
-
-    messageMap.get("DESSERTS")
-        .setEntries(menus.stream()
-            .filter(m -> m.isCategoryEqualTo(MenuCategory.DESSERTS))
-            .flatMap(menu -> menu.getMenuItems().stream()).toList());
-  }
-
 
   public void start() {
     Scanner sc = new Scanner(System.in);
@@ -117,9 +115,12 @@ public class Kiosk {
     }
   }
 
+  private KioskMessage selectMainByCart() {
+    return myCart.isEmpty() ? messageMap.get("MAIN") : messageMap.get("ORDER_MAIN");
+  }
+
 
   private KioskMessage processCategoryInput(int mainMenuInput) throws InputMismatchException {
-
     KioskMessage currentMessage;
 
     switch (mainMenuInput) {
@@ -137,11 +138,14 @@ public class Kiosk {
 
   private MenuItem processMenuInput(int subMenuInput, KioskMessage currentMessage)
       throws InputMismatchException {
+    if(!(currentMessage instanceof MenuKioskMessage tempMessage)) {
+      throw new InputMismatchException("메뉴를 선택하는 과정에서 문제가 생겼습니다.");
+    }
 
-    if (subMenuInput - 1 >= currentMessage.getEntries().size()) {
+    if (subMenuInput - 1 >= tempMessage.getEntries().size()) {
       throw new InputMismatchException("범위 안의 수를 입력해주세요.");
     }
-    MenuItem item = currentMessage.getEntries().get(subMenuInput - 1);
+    MenuItem item = tempMessage.getEntries().get(subMenuInput - 1);
     System.out.println("선택한 메뉴 : " + item);
 
     return item;
