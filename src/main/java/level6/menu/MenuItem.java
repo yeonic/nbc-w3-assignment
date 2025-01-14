@@ -16,4 +16,12 @@ public class MenuItem {
   public String toString() {
     return String.format("%-16s | W %.1f | %s", name, price, description);
   }
+
+  public String getName() {
+    return name;
+  }
+
+  public double getPrice() {
+    return price;
+  }
 }

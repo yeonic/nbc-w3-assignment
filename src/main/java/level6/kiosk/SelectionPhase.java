@@ -1,5 +1,5 @@
 package level6.kiosk;
 
 public enum SelectionPhase {
-  CATEGORY, MENU;
+  CATEGORY, MENU, CART
 }
