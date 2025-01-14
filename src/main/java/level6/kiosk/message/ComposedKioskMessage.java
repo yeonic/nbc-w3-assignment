@@ -16,8 +16,7 @@ public class ComposedKioskMessage implements KioskMessage{
     StringBuilder sb = new StringBuilder();
 
     for (KioskMessage element : elements) {
-      sb.append(element);
-      sb.append("\n");
+      sb.append(String.format("\n%s", element));
     }
     return sb.toString();
   }

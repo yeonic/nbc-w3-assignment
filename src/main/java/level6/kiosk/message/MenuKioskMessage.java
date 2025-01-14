@@ -19,11 +19,13 @@ public class MenuKioskMessage implements KioskMessage{
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append(String.format("\n%s\n", title));
+    sb.append(String.format("\n%s", title));
     for (int i = 0; i < entries.size(); i++) {
-      sb.append(String.format("%d. %s\n", i + 1, entries.get(i)));
+      sb.append(String.format("\n%d. %s", i + 1, entries.get(i)));
     }
-    sb.append(String.format("%s", numberZeroChoice));
+    if (!numberZeroChoice.isEmpty()){
+      sb.append(String.format("\n%s", numberZeroChoice));
+    }
 
     return sb.toString();
   }
