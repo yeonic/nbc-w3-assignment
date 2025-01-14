@@ -12,6 +12,10 @@ public class MenuItem {
     this.description = description;
   }
 
+  /**
+   *
+   * @return MenuItem의 출력 형식
+   */
   @Override
   public String toString() {
     return String.format("%-16s | W %.1f | %s", name, price, description);

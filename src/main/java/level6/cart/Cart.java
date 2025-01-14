@@ -1,9 +1,9 @@
-package level6.Cart;
+package level6.cart;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.naming.LimitExceededException;
-import level6.kiosk.DiscountPolicy;
+import level6.constants.DiscountPolicy;
 import level6.menu.MenuItem;
 
 public class Cart {

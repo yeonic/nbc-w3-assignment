@@ -1,4 +1,4 @@
-package level6.kiosk;
+package level6.constants;
 
 public enum DiscountPolicy {
   PATRIOTS("국가유공자",0.1),

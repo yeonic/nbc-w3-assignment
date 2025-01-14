@@ -15,6 +15,10 @@ public class KioskMessage {
     this.footer = footer;
   }
 
+  /**
+   *
+   * @return KioskMessage의 출력 형태
+   */
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();

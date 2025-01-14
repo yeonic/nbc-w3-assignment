@@ -1,2 +1,4 @@
-# nbc-w3-assignment
-내일배움캠프 3주차 키오스크
+# Week3 키오스크 구현 과제
+## About Project
+## Features
+## Structure

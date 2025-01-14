@@ -15,6 +15,10 @@ public class Main {
     kiosk.start();
   }
 
+  /**
+   * Kiosk에 주입될 Menu 리스트를 세팅한다.
+   * @return Kiosk가 사용할 Menu의 리스트
+   */
   private static List<Menu> initMenu() {
     List<Menu> menus = new ArrayList<>();
 

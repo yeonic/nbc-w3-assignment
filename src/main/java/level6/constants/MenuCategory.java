@@ -1,4 +1,4 @@
-package level6.menu;
+package level6.constants;
 
 public enum MenuCategory {
   BURGERS, DRINKS, DESSERTS

@@ -21,6 +21,7 @@ public class Main {
 
     while (true) {
       System.out.println("[ SHAKESHACK MENU ]");
+      // menuItem에 존재하는 메뉴들 하나씩 출력
       for (int i = 0; i < menuItems.size(); i++) {
         MenuItem tempItem = menuItems.get(i);
         System.out.printf((i+1) + ". " + format, tempItem.getName(), tempItem.getPrice(), tempItem.getDescription());

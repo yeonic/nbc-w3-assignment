@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import level6.kiosk.Kiosk;
 import level6.menu.Menu;
-import level6.menu.MenuCategory;
+import level6.constants.MenuCategory;
 import level6.menu.MenuItem;
 
 public class Main {

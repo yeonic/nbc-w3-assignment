@@ -1,6 +1,7 @@
 package level6.menu;
 
 import java.util.List;
+import level6.constants.MenuCategory;
 
 public class Menu {
 
