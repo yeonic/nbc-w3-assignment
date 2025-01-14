@@ -1,4 +1,4 @@
-package level4.kiosk;
+package level4_5.kiosk;
 
 public enum SelectionPhase {
   CATEGORY, MENU;
