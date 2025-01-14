@@ -8,7 +8,7 @@ import level6.menu.MenuItem;
 
 public class Cart {
 
-  List<MenuItem> cart = new ArrayList<>();
+  private final List<MenuItem> cart = new ArrayList<>();
 
   public void clear() {
     cart.clear();
@@ -23,6 +23,17 @@ public class Cart {
       throw new LimitExceededException("장바구니에는 같은 메뉴는 하나만 담을 수 있습니다.");
     }
     cart.add(item);
+  }
+
+  public void removeContainsName(String menuName) {
+    List<MenuItem> filtered = cart.stream()
+        .filter(item -> !item.getName().toLowerCase().contains(menuName.toLowerCase()))
+        .toList();
+
+
+
+    cart.clear();
+    cart.addAll(filtered);
   }
 
   public List<MenuItem> getCartItems() {

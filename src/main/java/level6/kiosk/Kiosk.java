@@ -72,12 +72,13 @@ public class Kiosk {
           case CATEGORY:
             // input 처리
             int categoryInput = nextInt(sc);
+
+            // 다음 State 지정
             currentMessage = processCategoryInput(categoryInput);
             if (currentMessage == null) {
               return;
             }
 
-            // 다음 State 지정
             // 입력이 3보다 작으면 메뉴 선택 페이지로
             switch (categoryInput) {
               case 1:
@@ -91,6 +92,8 @@ public class Kiosk {
               case 5:
                 currentPhase = SelectionPhase.CATEGORY;
                 break;
+              default:
+                throw new InputMismatchException("잘못된 입력입니다.");
             }
             break;
 
@@ -105,36 +108,58 @@ public class Kiosk {
             selectedItem = processMenuInput(menuInput, currentMessage);
 
             // 다음 State 지정
-            currentPhase = SelectionPhase.CART;
             currentMessage = messageMap.get("CART");
+            currentPhase = SelectionPhase.CART;
             break;
 
           case CART:
             // input 처리
             int cartInput = nextInt(sc);
-            currentMessage = processCartInput(cartInput, selectedItem);
 
             // 다음 State 지정
+            currentMessage = processCartInput(cartInput, selectedItem);
             currentPhase = SelectionPhase.CATEGORY;
             break;
 
           case ORDER_SEQ:
             // input 처리
             int orderInput = nextInt(sc);
-            if(orderInput == 1) {
-              processOrderInput(sc);
-            }
 
             // 다음 State 지정
-            currentMessage = selectMainMessageByCart();
-            currentPhase = SelectionPhase.CATEGORY;
+            switch (orderInput) {
+              case 1:
+                processOrderInput(sc);
+                currentMessage = selectMainMessageByCart();
+                currentPhase = SelectionPhase.CATEGORY;
+                break;
+              case 2:
+                System.out.println("삭제하고자 하는 메뉴 이름의 일부를 적어주세요.");
+                String keyword = sc.nextLine();
+                myCart.removeContainsName(keyword);
 
+                currentMessage = myCart.isEmpty() ? selectMainMessageByCart() : getOrderSheet();
+                currentPhase =
+                    myCart.isEmpty() ? SelectionPhase.CATEGORY : SelectionPhase.ORDER_SEQ;
+                break;
+              case 3:
+                currentMessage = selectMainMessageByCart();
+                currentPhase = SelectionPhase.CATEGORY;
+                break;
+              default:
+                throw new IllegalArgumentException("잘못된 입력입니다. 다시 입력해주세요.");
+            }
             break;
         }
       } catch (InputMismatchException e) {
-        System.out.println("InputMismatch: " + e.getMessage());
+        String errorMessage = e.getMessage();
+        if(errorMessage != null) {
+          System.out.println(errorMessage);
+        }
+        sc.nextLine();
       } catch (LimitExceededException e) {
         System.out.println("LimitExceed: " + e.getMessage());
+        currentMessage = selectMainMessageByCart();
+        currentPhase = SelectionPhase.CATEGORY;
       }
 
     }
@@ -160,6 +185,14 @@ public class Kiosk {
     return myCart.isEmpty() ? messageMap.get("MAIN") : messageMap.get("ORDER_MAIN");
   }
 
+  private KioskMessage getOrderSheet() {
+    return new ComposedKioskMessage(List.of(
+        new MenuKioskMessage("[ Orders ]", "", myCart.getCartItems()),
+        new StringKioskMessage(String.format("[ Total ]\nW %.1f\n", myCart.calculateTotal()), "",
+            List.of("1. 주문", "2. 메뉴 삭제", "3. 메뉴판"))
+    ));
+  }
+
 
   private KioskMessage processCategoryInput(int mainMenuInput) throws InputMismatchException {
     KioskMessage currentMessage;
@@ -176,10 +209,7 @@ public class Kiosk {
         if (myCart.isEmpty()) {
           throw new InputMismatchException("잘못된 입력입니다. 다시 입력해주세요.");
         }
-        currentMessage = new ComposedKioskMessage(List.of(
-            new MenuKioskMessage("[ Orders ]", "", myCart.getCartItems()),
-            new StringKioskMessage(String.format("[ Total ]\nW %.1f\n", myCart.calculateTotal()), "2. 메뉴판", List.of("1. 주문"))
-        ));
+        currentMessage = getOrderSheet();
       }
       case 5 -> {
         myCart.clear();
